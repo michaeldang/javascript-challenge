@@ -90,7 +90,7 @@ function validateForm(event) {
         isValid = false;
     }
     if (signupForm.birthdate.value) {
-        dateOfBirth = signupForm.birthdate.value;
+        dateOfBirth = new Date(signupForm.birthdate.value);
         var today = new Date();
         var ageYears = today.getFullYear() - dateOfBirth.getFullYear();
         var ageDays = today.getDate() - dateOfBirth.getUTCDate();
@@ -98,14 +98,16 @@ function validateForm(event) {
         if (ageMonths < 0 || (ageMonths == 0 && ageDays < 0)) {
             ageYears--;
         }
-        signupForm.birthdate.className = "form-control invalid";
-        isValid = false;
         if (ageYears < 13) {
             signupForm.birthdate.className = "form-control invalid";
+            isValid = false;
+            document.getElementById('birthdateMessage').innerHTML = "You need to be 13 or older.";
         } else {
             signupForm.birthdate.className = "form-control";
+            document.getElementById('birthdateMessage').innerHTML = "";
         }
     } else {
+        isValid = false;
         signupForm.birthdate.className = "form-control invalid";
     }
     if(!isValid) {
