@@ -84,10 +84,14 @@ function validateForm(event) {
     if (selectedState.length == 0) {
         signupForm.state.className = "form-control invalid";
         isValid = false;
+    } else {
+        signupForm.state.className = "form-control";
     }
     if (!zipCodeTest.test(signupForm.zip.value.trim())) {
         signupForm.zip.className = "form-control invalid";
         isValid = false;
+    } else {
+        signupForm.zip.className = "form-control";
     }
     if (signupForm.birthdate.value) {
         dateOfBirth = new Date(signupForm.birthdate.value);
