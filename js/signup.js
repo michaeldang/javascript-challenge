@@ -44,6 +44,7 @@ function validateForm(event) {
     var dateOfBirth;
     if (selectedOccupation.length == 0) {
         signupForm.occupation.className = "form-control invalid";
+        isValid = false;
     } else {
         signupForm.occupation.className = "form-control";
         if (selectedOccupation == "other") {
