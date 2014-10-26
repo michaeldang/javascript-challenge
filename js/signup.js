@@ -2,43 +2,22 @@
     Signup Form Script
     This script will load the state select list and validate the form before submission
 */
-//function validateForm(event) {
-//    console.log("HI");
-//    var occField = signupForm.occupation;
-//    var otherOccField = signupForm.occupationOther;
-//    var selectedOccupation = occField[occField.selectedIndex].value;
-//    var isValid = true;
-//    alert("false");
-//    try {
-//        if (selectedOccupation == "other" && (otherOccField.value == null || otherOccField.value == "" )) {
-//            otherOccField.className('form-control invalid');
-//            event.preventDefault();
-//            event.returnValue = false;
-//            return false;
-//        } else {
-//        }
-//    } catch (exception) {
-//        event.preventDefault();
-//        event.returnValue = false;
-//        return false;
-//    }
-//}
+var signupForm = document.forms["signup"];
+var occField = signupForm.occupation;
+var otherOccField = signupForm.occupationOther;
+var stateField = signupForm.state;
 
 document.addEventListener("DOMContentLoaded", function() {
-    var signupForm = document.forms["signup"];
-    var stateElement = signupForm.state;
     for (var index = 0; index < usStates.length; index++) {
         var stateName = usStates[index].name;
         var stateCode = usStates[index].code;
         var stateOption = document.createElement("OPTION");
         stateOption.value = stateCode;
         stateOption.text = stateName;
-        stateElement.appendChild(stateOption);
+        stateField.appendChild(stateOption);
     }
 
     signupForm.occupation.addEventListener("change", function() {
-        var occField = signupForm.occupation;
-        var otherOccField = signupForm.occupationOther;
         var selectedOccupation = occField[occField.selectedIndex].value;
         if (selectedOccupation == "other") {
             otherOccField.style.display = "block";
@@ -54,27 +33,84 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    function validateForm(event) {
-        console.log("HI");
-        var occField = signupForm.occupation;
-        var otherOccField = signupForm.occupationOher;
-        var selectedOccupation = occField[occField.selectedIndex].value;
-        var isValid = true;
-        alert("false");
-        try {
-            if (selectedOccupation == "other" && (otherOccField.value == null || otherOccField.value == "" )) {
-                otherOccField.className('form-control invalid');
-                event.preventDefault();
-                event.returnValue = false;
-                return false;
-            } else {
-            }
-        } catch (exception) {
-            event.preventDefault();
-            event.returnValue = false;
-            return false;
-        }
-    }
-
     signupForm.addEventListener("submit", validateForm);
 });
+
+function validateForm(event) {
+    var selectedOccupation = occField[occField.selectedIndex].value.trim();
+    var selectedState = stateField[stateField.selectedIndex].value.trim();
+    var isValid = true;
+    var zipCodeTest = new RegExp('^\\d{5}$');
+    var dateOfBirth;
+    if (selectedOccupation.length == 0) {
+        signupForm.occupation.className = "form-control invalid";
+    } else {
+        signupForm.occupation.className = "form-control";
+        if (selectedOccupation == "other") {
+            signupForm.occupationOther.className = "form-control invalid";
+            var otherOccField = signupForm.occupationOther;
+            var otherOcc = signupForm.occupationOther.value;
+            if (otherOcc.trim().length == 0) {
+                isValid = false;
+            }
+        } else {
+            signupForm.occupationOther.className = "form-control";
+        }
+    }
+    if (signupForm.firstName.value.trim().length == 0) {
+        signupForm.firstName.className = "form-control invalid";
+        isValid = false;
+    } else {
+        signupForm.firstName.className = "form-control";
+    }
+    if (signupForm.lastName.value.trim().length == 0) {
+        signupForm.lastName.className = "form-control invalid";
+        isValid = false;
+    } else {
+        signupForm.lastName.className = "form-control";
+    }
+    if (signupForm.address1.value.trim().length == 0) {
+        signupForm.address1.className = "form-control invalid";
+        isValid = false;
+    } else {
+        signupForm.address1.className = "form-control";
+    }
+    if (signupForm.city.value.trim().length == 0) {
+        signupForm.city.className = "form-control invalid";
+        isValid = false;
+    } else {
+        signupForm.city.className = "form-control";
+    }
+    if (selectedState.length == 0) {
+        signupForm.state.className = "form-control invalid";
+        isValid = false;
+    }
+    if (!zipCodeTest.test(signupForm.zip.value.trim())) {
+        signupForm.zip.className = "form-control invalid";
+        isValid = false;
+    }
+    if (signupForm.birthdate.value) {
+        dateOfBirth = signupForm.birthdate.value;
+        var today = new Date();
+        var ageYears = today.getFullYear() - dateOfBirth.getFullYear();
+        var ageDays = today.getDate() - dateOfBirth.getUTCDate();
+        var ageMonths = today.getMonth() - dateOfBirth.getUTCMonth();
+        if (ageMonths < 0 || (ageMonths == 0 && ageDays < 0)) {
+            ageYears--;
+        }
+        signupForm.birthdate.className = "form-control invalid";
+        isValid = false;
+        if (ageYears < 13) {
+            signupForm.birthdate.className = "form-control invalid";
+        } else {
+            signupForm.birthdate.className = "form-control";
+        }
+    } else {
+        signupForm.birthdate.className = "form-control invalid";
+    }
+    if(!isValid) {
+        event.preventDefault();
+        event.returnValue = false;
+        return false;
+    }
+}
